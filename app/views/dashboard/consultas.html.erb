@@ -1,0 +1,287 @@
+<h2 class="text-2xl font-bold text-slate-800 mb-4 bg-[#AE445A] flex items-center h-[100px] p-[10px]">Consultas</h2>
+
+<div id="consultas" class="space-y-8 p-[15px] lg:grid lg:grid-cols-2">
+
+  <!-- Datos del Estudiante -->
+  <div id="datos-estudiante" class="space-y-4 p-[10px] lg:col-span-2">
+    <h3 class="text-[#432E54] font-semibold text-[24px]">Datos del Estudiante</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-[20px] bg-[#E8BCB9] rounded-[10px] lg:w-[50%] lg:ml-auto lg:mr-auto">
+
+      <!-- Nombre -->
+      <div class="relative">
+        <label for="estudiante-nombre" class="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
+        <input type="text" id="estudiante-nombre"
+               class="w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:outline-none px-3 py-2 text-sm"
+               placeholder="Escribe para buscar...">
+
+        <div id="consulta-suggestions"
+             class="absolute top-full left-0 w-4/5 bg-white border border-slate-300 border-t-0 rounded-b-md shadow-lg z-50 max-h-60 overflow-y-auto hidden">
+        </div>
+      </div>
+
+      <!-- Institución -->
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Institución</label>
+        <input type="text" id="estudiante-institucion"
+               class="w-full rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm" readonly>
+      </div>
+
+      <!-- Grado -->
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Grado</label>
+        <input type="text" id="estudiante-grado"
+               class="w-full rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm" readonly>
+      </div>
+
+      <!-- Teléfono -->
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Teléfono</label>
+        <input type="text" id="estudiante-telefono"
+               class="w-full rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm" readonly>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Estado Solvencia -->
+  <div id="estado-solvencia" class="space-y-4 lg:col-span-2 lg:justify-self-center">
+    <h3 class="text-[#432E54] font-semibold text-[24px]">Estado Solvencia</h3>
+
+    <div class="overflow-x-auto overflow-y-auto w-[100%] h-[100px] p-[15px] lg:mr-auto lg:ml-auto">
+      <table id="solvencia-table" class="min-w-[860px] border border-slate-300 text-sm text-slate-700">
+        <thead class="bg-slate-100 text-slate-800 font-semibold">
+          <tr class="bg-[#E8BCB9]">
+            <th class="border border-slate-300 px-3 py-2">Inscripción</th>
+            <th class="border border-slate-300 px-3 py-2">Enero</th>
+            <th class="border border-slate-300 px-3 py-2">Febrero</th>
+            <th class="border border-slate-300 px-3 py-2">Marzo</th>
+            <th class="border border-slate-300 px-3 py-2">Abril</th>
+            <th class="border border-slate-300 px-3 py-2">Mayo</th>
+            <th class="border border-slate-300 px-3 py-2">Junio</th>
+            <th class="border border-slate-300 px-3 py-2">Julio</th>
+            <th class="border border-slate-300 px-3 py-2">Agosto</th>
+            <th class="border border-slate-300 px-3 py-2">Septiembre</th>
+            <th class="border border-slate-300 px-3 py-2">Octubre</th>
+            <th class="border border-slate-300 px-3 py-2">Noviembre</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="solvencia-valores" class="text-center">
+            <td data-concepto="Inscripcion" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Enero" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Febrero" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Marzo" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Abril" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Mayo" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Junio" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Julio" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Agosto" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Septiembre" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Octubre" class="border border-slate-300 px-3 py-2"></td>
+            <td data-concepto="Noviembre" class="border border-slate-300 px-3 py-2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="solvencia-indicador"
+         class="text-[#4B4376] text-align-center">
+      Selecciona un estudiante para ver el estado de solvencia
+    </div>
+  </div>
+
+
+  <!-- Información Académica -->
+  <div id="informacion-academica" class="space-y-6 lg:col-span-2">
+    <h3 class="text-[#BF092F] font-semibold text-[24px]">Información Académica</h3>
+
+    <!-- Solvencia Exámenes -->
+    <div class="lg:grid lg:grid-cols-2">
+    <div id="solvencia-examenes">
+      <h4 class="text-[#432E54] font-semibold text-[18px]">Solvencia Exámenes</h4>
+     <div class="p-[15px]">
+      <table id="examenes-table" class="w-[100%]">
+        <thead class="bg-slate-100">
+          <tr class="bg-[#E8BCB9]">
+            <th class="border border-slate-300 px-3 py-2">Concepto</th>
+            <th class="border border-slate-300 px-3 py-2">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="border border-slate-300 px-3 py-2">Papelería</td><td data-examen="Papeleria" class="border border-slate-300 px-3 py-2"></td></tr>
+          <tr><td class="border border-slate-300 px-3 py-2">Examen 1</td><td data-examen="Examen uno" class="border border-slate-300 px-3 py-2"></td></tr>
+          <tr><td class="border border-slate-300 px-3 py-2">Examen 2</td><td data-examen="Examen dos" class="border border-slate-300 px-3 py-2"></td></tr>
+          <tr><td class="border border-slate-300 px-3 py-2">Examen 3</td><td data-examen="Examen tres" class="border border-slate-300 px-3 py-2"></td></tr>
+          <tr><td class="border border-slate-300 px-3 py-2">Examen 4</td><td data-examen="Examen cuatro" class="border border-slate-300 px-3 py-2"></td></tr>
+        </tbody>
+      </table>
+     </div>
+    </div>
+
+    <!-- Notas y Asignaciones -->
+    <div id="notas-asignaciones" class="space-y-2">
+      <h4 class="text-[#432E54] font-semibold text-[18px]">Notas y Asignaciones</h4>
+      <div class="overflow-x-auto w-[100%] h-[200px] p-[15px]">
+        <table id="asignaciones-notas-table" class="w-[100%]">
+        <thead class="bg-slate-100">
+          <tr class="bg-[#E8BCB9]">
+            <th class="border border-slate-300 px-3 py-2">Curso</th>
+            <th class="border border-slate-300 px-3 py-2">Nota</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      </div>
+      <div id="promedio-notas" class="text-[#432E54] font-semibold text-[24px]">Promedio: -</div>
+    </div>
+    </div>
+    <div class="mt-4 flex items-center gap-2">
+      <a id="btn-estado-cuenta-open" href="#" class="hidden bg-[#432E54] text-white px-3 py-2 rounded">Descargar Estado de Cuenta (PDF)</a>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const nombreInput = document.getElementById('estudiante-nombre');
+    const suggestions = document.getElementById('consulta-suggestions');
+
+    function setIndicador(solvente) {
+      const ind = document.getElementById('solvencia-indicador');
+      if (!ind) return;
+      if (solvente === true) {
+        ind.textContent = 'Solvente';
+        ind.style.backgroundColor = '#86efac';
+        ind.style.border = '1px solid #16a34a';
+      } else if (solvente === false) {
+        ind.textContent = 'No solvente';
+        ind.style.backgroundColor = '#fecaca';
+        ind.style.border = '1px solid #dc2626';
+      } else {
+        ind.textContent = 'Selecciona un estudiante para ver el estado de solvencia';
+        ind.style.backgroundColor = '';
+        ind.style.border = '';
+      }
+    }
+
+    function rellenarDatos(est) {
+      document.getElementById('estudiante-nombre').value = est.nombre_completo || '';
+      document.getElementById('estudiante-institucion').value = est.institucion || '';
+      document.getElementById('estudiante-grado').value = est.grado_nombre || '';
+      document.getElementById('estudiante-telefono').value = est.telefono || '';
+    }
+
+    function rellenarSolvencia(pagos) {
+      const celdas = document.querySelectorAll('#solvencia-valores td');
+      celdas.forEach(td => {
+        const key = td.getAttribute('data-concepto');
+        td.textContent = pagos && pagos[key] ? pagos[key] : '';
+      });
+    }
+
+    function rellenarExamenes(examenes) {
+      const tds = document.querySelectorAll('#examenes-table td[data-examen]');
+      tds.forEach(td => {
+        const key = td.getAttribute('data-examen');
+        const ok = examenes && examenes[key];
+        td.textContent = ok ? 'Solvente' : 'No Solvente';
+      });
+    }
+
+    function rellenarAsignaciones(asignaciones, promedio) {
+      const tbody = document.querySelector('#asignaciones-notas-table tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (Array.isArray(asignaciones)) {
+        asignaciones.forEach(a => {
+          const tr = document.createElement('tr');
+          const tdCurso = document.createElement('td');
+          tdCurso.textContent = a.curso_nombre || '';
+          const tdNota = document.createElement('td');
+          const notaVal = (a.nota != null) ? Number(a.nota) : null;
+          tdNota.textContent = notaVal != null && !Number.isNaN(notaVal) ? notaVal : '';
+          if (notaVal != null && !Number.isNaN(notaVal)) {
+            tdNota.style.backgroundColor = notaVal >= 60 ? '#86efac' : '#fecaca';
+          }
+          tr.appendChild(tdCurso);
+          tr.appendChild(tdNota);
+          tbody.appendChild(tr);
+        });
+      }
+      const promDiv = document.getElementById('promedio-notas');
+      if (promDiv) {
+        promDiv.textContent = `Promedio: ${promedio != null ? Number(promedio).toFixed(2) : '-'}`;
+      }
+    }
+
+    function cargarConsultas(estudianteId) {
+      fetch(`/dashboard/consultas_datos?estudiante_id=${encodeURIComponent(estudianteId)}`, { headers: { 'Accept': 'application/json' } })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.estudiante) {
+            rellenarDatos(data.estudiante);
+            rellenarSolvencia(data.pagos);
+            setIndicador(data.solvente);
+            rellenarExamenes(data.examenes);
+            rellenarAsignaciones(data.asignaciones, data.promedio);
+            // Actualizar botón de descarga de estado de cuenta (PDF)
+            const btnOpen = document.getElementById('btn-estado-cuenta-open');
+            if (btnOpen) {
+              const url = `/reportes/estado_cuenta?estudiante_id=${encodeURIComponent(data.estudiante.id)}&format=pdf`;
+              btnOpen.href = url;
+              btnOpen.classList.remove('hidden');
+            }
+          }
+        })
+        .catch(err => console.error('Error:', err));
+    }
+
+    if (nombreInput) {
+      nombreInput.addEventListener('input', function() {
+        const q = this.value.trim();
+        if (q.length < 2) {
+          suggestions.innerHTML = '';
+          suggestions.style.display = 'none';
+          return;
+        }
+        // Inline dropdown already positioned with Tailwind (top-full)
+        fetch(`/dashboard/buscar_estudiantes?q=${encodeURIComponent(q)}`, { headers: { 'Accept': 'application/json' } })
+          .then(r => r.json())
+          .then(data => {
+            suggestions.innerHTML = '';
+            if (data.estudiantes && data.estudiantes.length > 0) {
+              data.estudiantes.forEach(e => {
+                const item = document.createElement('div');
+                item.className = 'px-3 py-2 cursor-pointer hover:bg-gray-100';
+                item.textContent = `${e.nombre_completo} - ${e.grado_nombre || 'Sin grado'}`;
+                item.addEventListener('click', function() {
+                  nombreInput.value = e.nombre_completo;
+                  suggestions.style.display = 'none';
+                  cargarConsultas(e.id);
+                });
+                suggestions.appendChild(item);
+              });
+              suggestions.style.display = 'block';
+            } else {
+              suggestions.style.display = 'none';
+            }
+          })
+          .catch(err => console.error('Error:', err));
+      });
+
+      document.addEventListener('click', function(ev) {
+        const wrapper = document.querySelector('#datos-estudiante .relative');
+        if (!wrapper) return;
+        if (!wrapper.contains(ev.target)) {
+          suggestions.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('keydown', function(ev) {
+        if (ev.key === 'Escape') suggestions.style.display = 'none';
+      });
+    }
+  });
+</script>

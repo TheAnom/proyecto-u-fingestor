@@ -1,0 +1,60 @@
+class AsignacionCursosController < ApplicationController
+  before_action :require_login
+  before_action -> { require_role('administrador', 'suplente') }, only: [:update, :destroy]
+  before_action :set_asignacion, only: [:show, :update, :destroy]
+
+  def show
+    render json: { 
+      asignacion: {
+        id: @asignacion.id,
+        estudiante_id: @asignacion.estudiante_id,
+        estudiante_nombre: @asignacion.estudiante&.nombre_completo,
+        curso_id: @asignacion.curso_id,
+        curso_nombre: @asignacion.curso&.nombre,
+        nota: @asignacion.nota
+      }
+    }
+  end
+
+  def update
+    if @asignacion.update(asignacion_params)
+      render json: { 
+        success: true, 
+        asignacion: {
+          id: @asignacion.id,
+          estudiante_id: @asignacion.estudiante_id,
+          estudiante_nombre: @asignacion.estudiante&.nombre_completo,
+          curso_id: @asignacion.curso_id,
+          curso_nombre: @asignacion.curso&.nombre,
+          nota: @asignacion.nota
+        }
+      }
+    else
+      field_errors = {}
+      @asignacion.errors.each do |error|
+        field_errors[error.attribute] ||= []
+        field_errors[error.attribute] << error.message
+      end
+      render json: { 
+        success: false, 
+        errors: @asignacion.errors.full_messages,
+        field_errors: field_errors
+      }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @asignacion.destroy
+    render json: { success: true }
+  end
+
+  private
+
+  def set_asignacion
+    @asignacion = AsignacionCurso.find(params[:id])
+  end
+
+  def asignacion_params
+    params.require(:asignacion).permit(:estudiante_id, :curso_id, :nota)
+  end
+end

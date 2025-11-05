@@ -1,0 +1,70 @@
+<style>
+  .encabezado-nombres {
+  background-color: #AE445A; /* Gray-100 */
+  padding: 10px;
+}
+.titulo-encabezado {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+  color: #432E54;
+}
+.rol-encabezado {
+  font-size: 1.25rem;
+  color: #E8BCB9; /* Gray-500 */
+  margin: 0;
+}
+body{
+  background-color: #E8BCB9;
+}
+
+</style>
+
+
+
+<div class=encabezado-nombres>
+  <h1 class="titulo-encabezado">Bienvenido, <%= @usuario.nombre %></h1>
+  <p class="rol-encabezado"><%= @usuario.rol.nombre %></p>
+  <h2 class="text-[#E8BCB9]">Dashboard</h2>
+</div>
+
+
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 bg-[#E8BCB9]  lg:pl-[180px] lg:pr-[180px] lg:pt-[100px] p-[20px]">
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <h3 class="text-sm font-medium text-gray-900 text-[#432E54]">Estudiantes</h3>
+    <p class="mt-1 text-sm text-gray-500">Total de estudiantes</p>
+    <div class="mt-2 text-3xl font-bold text-gray-900 text-[#432E54]"><%= @estudiantes_count %></div>
+  </div>
+
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <h3 class="text-sm font-medium text-gray-900 text-[#432E54]">Pagos</h3>
+    <p class="mt-1 text-sm text-gray-500">Pagos registrados</p>
+    <div class="mt-2 text-3xl font-bold text-gray-900 text-[#432E54]"><%= @pagos_count %></div>
+  </div>
+
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <h3 class="text-sm font-medium text-gray-900 text-[#432E54]">Fecha</h3>
+    <p class="mt-1 text-sm text-gray-500">Hoy</p>
+    <div class="mt-2 text-2xl font-semibold text-gray-900 text-[#432E54]"><%= I18n.l(@hoy, format: "%A %d de %B de %Y") %></div>
+  </div>
+
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <h3 class="text-sm font-medium text-gray-900 text-[#432E54]">Ingresos</h3>
+    <p class="mt-1 text-sm text-gray-500">Total de pagos</p>
+    <div class="mt-2 text-3xl font-bold text-gray-900 text-[#432E54]"><%= number_to_currency(@ingresos_total, unit: 'Q', precision: 2) %></div>
+  </div>
+</div>
+
+<div class="bg-[#E8BCB9] lg:pl-[180px] lg:pr-[180px] p-[20px]">
+  <% desde = Date.current.beginning_of_month %>
+  <% hasta = Date.current.end_of_month %>
+  <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm flex items-center justify-between">
+    <div>
+      <h3 class="text-sm font-medium text-[#432E54]">Reporte mensual</h3>
+      <p class="text-sm text-gray-500">Periodo: <%= desde %> a <%= hasta %></p>
+    </div>
+    <div class="space-x-2">
+      <a class="bg-[#432E54] text-white px-3 py-2 rounded" href="<%= reportes_mensual_path(format: :pdf, desde: desde, hasta: hasta) %>">Descargar reporte (PDF)</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1036 @@
+<style>
+  tr{
+    border-bottom: 1px solid #ddd;
+  }
+</style>
+
+<h1 class="text-2xl font-bold text-slate-800 mb-4 bg-[#AE445A] flex items-center h-[100px] p-[10px]">Control de Usuarios</h1>
+
+<!-- Asignaciones -->
+<div class="lg:grid grid-cols-2">
+<div id="contenedor-1" class="space-y-6 bg-white shadow-md rounded-2xl p-6 mb-10 bg-[#48e] lg:col-span-2 lg:grid lg:grid-cols-2 lg:gap-[25px]">
+
+  
+
+  <div class="p-[10px]">
+  <h2 class="text-[#432E54] font-semibold text-[24px]">Asignaciones</h2>
+  <%= form_with url: dashboard_guardar_asignacion_path, local: true, id: 'asignacion-form', class: "space-y-4 bg-[#E8BCB9] rounded-[10px] p-[15px]" do |f| %>
+
+    <!-- Estudiante -->
+    <div>
+      <%= label_tag :estudiante_id, "Estudiante", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <div class="relative">
+        <input type="text" id="estudiante-search"
+               placeholder="Buscar estudiante..."
+               class="w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 focus:outline-none px-3 py-2 text-sm">
+        <input type="hidden" id="estudiante_id" name="asignacion[estudiante_id]">
+
+        <div id="estudiante-suggestions"
+             class="absolute top-full left-0 w-[150px] bg-white border border-slate-300 border-t-0 rounded-b-md shadow-lg z-50 max-h-52 overflow-y-auto hidden">
+        </div>
+      </div>
+    </div>
+
+    <!-- Curso -->
+    <div>
+      <%= label_tag :curso_id, "Curso", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= select_tag :curso_id,
+          options_from_collection_for_select(@cursos, :id, :nombre),
+          prompt: "Curso",
+          class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+          name: "asignacion[curso_id]" %>
+    </div>
+
+    <!-- Nota -->
+    <div>
+      <%= label_tag :nota, "Nota", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= number_field_tag :nota, 0,
+          class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+          name: "asignacion[nota]", min: 0, max: 100 %>
+    </div>
+
+    <!-- Botón Guardar -->
+    <%= submit_tag "Guardar",
+        class: "bg-[#4B4376] w-[110px] h-[40px] rounded-[10px] text-[#E8BCB9]" %>
+  <% end %>
+  </div>
+
+  
+  <div class="overflow-x-auto">
+  <h3 class="text-[#432E54] font-semibold text-[24px]">Asignaciones registradas</h3>
+    <table id="asignaciones-table" class="w-[100%] lg:mt-[25px]">
+      <thead>
+        <tr class="bg-[#E8BCB9]">
+          <th class="p-[10px] text-[15px]">Estudiante</th>
+          <th class="p-[10px] text-[15px]">Curso</th>
+          <th class="p-[10px] text-[15px]">Nota</th>
+          <th class="p-[10px] text-[15px]">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @asignaciones.each do |a| %>
+          <tr data-id="<%= a.id %>" data-estudiante_id="<%= a.estudiante_id %>" data-curso_id="<%= a.curso_id %>" data-nota="<%= a.nota %>">
+            <td class="text-[13px]"><%= a.estudiante&.nombre_completo %></td>
+            <td class="text-[13px]"><%= a.curso&.nombre %></td>
+            <td class="text-[13px]"><%= a.nota %></td>
+            <td class="flex flex-col gap-[8px] p-[4px]">
+              <button class="btn-edit-asignacion bg-[#E8BCB9] p-[2px] text-[11px]">Modificar</button>
+              <button class="btn-delete-asignacion bg-[#E8BCB9] p-[2px] text-[11px]">Eliminar</button>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <!-- Paginación de Asignaciones -->
+    <div class="pagination-controls mt-4 flex justify-center items-center gap-2">
+      <%= paginate @asignaciones, param_name: 'asignaciones_page' %>
+    </div>
+  </div>
+</div>
+
+<!-- contendor 2 Gestión de Cursos y Profesores -->
+<div id="contenedor-2" class="space-y-8 bg-white shadow-md rounded-2xl p-6 mb-10 lg:col-span-2">
+
+  <!-- CURSOS -->
+  <div class="space-y-4 lg:grid lg:grid-cols-2 lg:gap-[25px]">
+
+    <div class="">
+    <h3 class="text-[#432E54] font-semibold text-[24px]">Cursos</h3>
+    <%= form_with url: dashboard_guardar_curso_path, local: true, id: 'curso-form', class: "space-y-4 bg-[#E8BCB9] rounded-[10px] p-[15px]" do |f| %>
+      <div>
+        <%= label_tag :nombre, "Nombre del Curso", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= text_field_tag :nombre, nil,
+            class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+            name: "curso[nombre]", placeholder: "Ingrese el nombre del curso" %>
+      </div>
+
+      <div>
+        <%= label_tag :profesor_id, "Profesor", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= select_tag :profesor_id,
+            options_from_collection_for_select(@profesores, :id, :nombre),
+            prompt: "Selecciona un profesor",
+            class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+            name: "curso[profesor_id]" %>
+      </div>
+
+      <%= submit_tag "Guardar",
+          class: "bg-[#4B4376] w-[110px] h-[40px] rounded-[10px] text-[#E8BCB9]" %>
+    <% end %>
+    </div>
+
+
+    
+    <div class="overflow-x-auto">
+    <h4 class="text-[#432E54] font-semibold text-[24px]">Lista de Cursos</h4>
+      <table id="cursos-table" class="w-[100%] lg:mt-[25px]">
+        <thead class="bg-[#E8BCB9]">
+          <tr>
+            <th class="p-[10px] text-[15px]">Nombre</th>
+            <th class="p-[10px] text-[15px]">Profesor</th>
+            <th class="p-[10px] text-[15px]">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @cursos.each do |curso| %>
+            <tr class="hover:bg-slate-50" data-id="<%= curso.id %>" data-nombre="<%= j curso.nombre %>" data-profesor_id="<%= curso.profesor_id %>">
+              <td class="text-[13px]"><%= curso.nombre %></td>
+              <td class="text-[13px]"><%= curso.profesor&.nombre %></td>
+              <td class="flex flex-col gap-[8px] p-[4px]">
+                <button class="btn-edit-curso bg-[#E8BCB9] p-[2px] text-[11px]">Modificar</button>
+                <button class="btn-delete-curso bg-[#E8BCB9] p-[2px] text-[11px]">Eliminar</button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      
+      <!-- Paginación de Cursos -->
+      <div class="pagination-controls mt-4 flex justify-center items-center gap-2">
+        <%= paginate @cursos, param_name: 'cursos_page' %>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- profesores -->
+  <div class="space-y-4 lg:grid lg:grid-cols-2 lg:gap-[25px]">
+
+    <div class="">
+
+    <h3 class="text-[#432E54] font-semibold text-[24px]">Profesores</h3>
+    <%= form_with url: dashboard_guardar_profesor_path, local: true, id: 'profesor-form', class: "space-y-4 bg-[#E8BCB9] rounded-[10px] p-[15px]" do |f| %>
+      <div>
+        <%= label_tag :nombre, "Nombre del Profesor", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= text_field_tag :nombre, nil,
+            class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+            name: "profesor[nombre]", placeholder: "Ingrese el nombre del profesor" %>
+      </div>
+
+      <div>
+        <%= label_tag :telefono, "Teléfono", class: "block text-sm font-medium text-slate-700 mb-1" %>
+        <%= text_field_tag :telefono, nil,
+            class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+            name: "profesor[telefono]", placeholder: "Ingrese el teléfono" %>
+      </div>
+
+      <%= submit_tag "Guardar",
+          class: "bg-[#4B4376] w-[110px] h-[40px] rounded-[10px] text-[#E8BCB9]" %>
+    <% end %>
+    </div>
+
+    
+    <div class="overflow-x-auto">
+    <h4 class="text-[#432E54] font-semibold text-[24px]">Lista de Profesores</h4>
+      <table id="profesores-table" class="w-[100%] lg:mt-[25px]">
+        <thead>
+          <tr class="bg-[#E8BCB9]">
+            <th class="p-[10px] text-[15px]">Nombre</th>
+            <th class="p-[10px] text-[15px]">Teléfono</th>
+            <th class="p-[10px] text-[15px]">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @profesores.each do |profesor| %>
+            <tr class="hover:bg-slate-50" data-id="<%= profesor.id %>" data-nombre="<%= j profesor.nombre %>" data-telefono="<%= j profesor.telefono %>">
+              <td class="text-[13px]"><%= profesor.nombre %></td>
+              <td class="text-[13px]"><%= profesor.telefono %></td>
+              <td class="flex flex-col gap-[8px] p-[4px]">
+                <button class="btn-edit-profesor bg-[#E8BCB9] p-[2px] text-[11px]">Modificar</button>
+                <button class="btn-delete-profesor bg-[#E8BCB9] p-[2px] text-[11px]">Eliminar</button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      
+      <!-- Paginación de Profesores -->
+      <div class="pagination-controls mt-4 flex justify-center items-center gap-2">
+        <%= paginate @profesores, param_name: 'profesores_page' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- contendor 3 Gestión de Usuarios -->
+<div id="contenedor-3" class="space-y-8 bg-white shadow-md rounded-2xl p-6 lg:col-span-2 lg:grid lg:grid-cols-2 lg:gap-[25px]">
+  
+
+  
+
+  <div class="">
+  <h2 class="text-[#432E54] font-semibold text-[24px]">Gestión de Usuarios</h2>
+  <%= form_with url: dashboard_guardar_usuario_path, local: true, id: 'usuario-form', class: "space-y-4 bg-[#E8BCB9] rounded-[10px] p-[15px]" do |f| %>
+    <div>
+      <%= label_tag :nombre, "Nombre del Usuario", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= text_field_tag :nombre, nil,
+          class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+          name: "usuario[nombre]", placeholder: "Ingrese el nombre del usuario" %>
+    </div>
+
+    <div>
+      <%= label_tag :password, "Password", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <div class="relative">
+        <%= password_field_tag :password, nil,
+            class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 pr-10 text-sm",
+            name: "usuario[password]", placeholder: "Enter password", id: "usuario_password_field" %>
+        <button type="button" id="toggle_password_visibility" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+          <svg id="eye_icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <svg id="eye_slash_icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <%= label_tag :rol_id, "Rol", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= select_tag :rol_id,
+          options_from_collection_for_select(@roles, :id, :nombre),
+          prompt: "Selecciona un rol",
+          class: "w-full rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-400 px-3 py-2 text-sm",
+          name: "usuario[rol_id]" %>
+    </div>
+
+    <%= submit_tag "Guardar",
+        class: "bg-[#4B4376] w-[110px] h-[40px] rounded-[10px] text-[#E8BCB9]" %>
+  <% end %>
+  </div>
+
+
+  
+  <div class="overflow-x-auto">
+  <h4 class="text-[#432E54] font-semibold text-[24px]">Lista de Usuarios</h4>
+    <table id="usuarios-table" class="mr-auto ml-auto lg:mt-[25px]">
+      <thead>
+        <tr class="bg-[#E8BCB9]"> 
+          <th class="p-[10px] text-[15px]">Nombre</th>
+          <th class="p-[10px] text-[15px]">Password</th>
+          <th class="p-[10px] text-[15px]">Rol</th>
+          <th class="p-[10px] text-[15px]">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @usuarios.each do |usuario| %>
+          <tr class="hover:bg-slate-50" data-id="<%= usuario.id %>" data-nombre="<%= j usuario.nombre %>" data-rol_id="<%= usuario.rol_id %>">
+            <td class="text-[13px]"><%= usuario.nombre %></td>
+            <td class="text-[13px]">••••••</td>
+            <td class="text-[13px]"><%= usuario.rol&.nombre %></td>
+            <td class="flex flex-col gap-[8px] p-[4px]">
+              <button class="btn-edit-usuario bg-[#E8BCB9] p-[2px] text-[11px]">Modificar</button>
+              <button class="btn-delete-usuario bg-[#E8BCB9] p-[2px] text-[11px]">Eliminar</button>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <!-- Paginación de Usuarios -->
+    <div class="pagination-controls mt-4 flex justify-center items-center gap-2">
+      <%= paginate @usuarios, param_name: 'usuarios_page' %>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<script>
+  // Funciones helper para manejo de errores por campo
+  function clearFieldErrors(formElement) {
+    const errorDivs = formElement.querySelectorAll('.field-error');
+    errorDivs.forEach(function(div) {
+      div.textContent = '';
+      div.classList.add('hidden');
+    });
+    
+    const inputs = formElement.querySelectorAll('input, select, textarea');
+    inputs.forEach(function(input) {
+      input.classList.remove('border-red-500');
+      input.classList.add('border-slate-300');
+    });
+  }
+
+  function displayFieldErrors(formElement, fieldErrors) {
+    clearFieldErrors(formElement);
+    
+    Object.keys(fieldErrors).forEach(function(fieldName) {
+      const errors = fieldErrors[fieldName];
+      const errorDiv = formElement.querySelector('[data-error-for="' + fieldName + '"]');
+      const input = formElement.querySelector('[name*="' + fieldName + '"]');
+      
+      if (errorDiv && errors.length > 0) {
+        errorDiv.textContent = errors.join(', ');
+        errorDiv.classList.remove('hidden');
+      }
+      
+      if (input) {
+        input.classList.remove('border-slate-300');
+        input.classList.add('border-red-500');
+      }
+    });
+  }
+
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ' + 
+      (type === 'success' ? 'bg-green-500' : 'bg-red-500') + ' text-white';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(function() {
+      notification.remove();
+    }, 3000);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const estudianteSearch = document.getElementById('estudiante-search');
+    const estudianteId = document.getElementById('estudiante_id');
+    const suggestions = document.getElementById('estudiante-suggestions');
+    const asignacionesTable = document.getElementById('asignaciones-table');
+
+    // Typeahead para estudiantes
+    if (estudianteSearch) {
+      estudianteSearch.addEventListener('input', function() {
+        const query = this.value.trim();
+        if (query.length < 2) {
+          suggestions.innerHTML = '';
+          return;
+        }
+
+        fetch(`/dashboard/buscar_estudiantes?q=${encodeURIComponent(query)}`, {
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+          suggestions.innerHTML = '';
+          if (data.estudiantes && data.estudiantes.length > 0) {
+            data.estudiantes.forEach(estudiante => {
+              const div = document.createElement('div');
+              div.style.cssText = 'padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; background: white;';
+              div.textContent = `${estudiante.nombre_completo} - ${estudiante.grado_nombre || 'Sin grado'}`;
+              div.dataset.id = estudiante.id;
+              div.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f8f9fa';
+              });
+              div.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = 'white';
+              });
+              div.addEventListener('click', function() {
+                estudianteSearch.value = estudiante.nombre_completo;
+                estudianteId.value = estudiante.id;
+                suggestions.style.display = 'none';
+              });
+              suggestions.appendChild(div);
+            });
+            suggestions.style.display = 'block';
+          } else {
+            suggestions.style.display = 'none';
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+
+      // Ocultar sugerencias al hacer click fuera
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.relative')) {
+          suggestions.style.display = 'none';
+        }
+      });
+    }
+
+    // Filtrar tabla de asignaciones al seleccionar estudiante
+    if (estudianteId && asignacionesTable) {
+      estudianteId.addEventListener('change', function() {
+        const estudianteIdValue = this.value;
+        const rows = asignacionesTable.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+          if (estudianteIdValue === '' || row.dataset.estudiante_id === estudianteIdValue) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    // Función para attach handlers
+    function attachAsignacionHandlers(row) {
+      const editBtn = row.querySelector('.btn-edit-asignacion');
+      const deleteBtn = row.querySelector('.btn-delete-asignacion');
+
+      if (editBtn) {
+        editBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const asignacionId = row.dataset.id;
+          const estudianteId = row.dataset.estudiante_id;
+          const cursoId = row.dataset.curso_id;
+          const nota = row.dataset.nota;
+
+          // Rellenar formulario
+          const form = document.getElementById('asignacion-form');
+          if (form) {
+            const estudianteSearch = form.querySelector('#estudiante-search');
+            const estudianteIdField = form.querySelector('#estudiante_id');
+            const cursoSelect = form.querySelector('select[name="asignacion[curso_id]"]');
+            const notaInput = form.querySelector('input[name="asignacion[nota]"]');
+
+          if (estudianteSearch) estudianteSearch.value = row.querySelector('td:nth-child(1)').textContent;
+          if (estudianteIdField) estudianteIdField.value = estudianteId;
+            if (cursoSelect) cursoSelect.value = cursoId;
+            if (notaInput) notaInput.value = nota;
+
+            // Agregar campo hidden para ID
+            let idField = form.querySelector('input[name="asignacion[id]"]');
+            if (!idField) {
+              idField = document.createElement('input');
+              idField.type = 'hidden';
+              idField.name = 'asignacion[id]';
+              form.appendChild(idField);
+            }
+            idField.value = asignacionId;
+
+            // Cambiar texto del botón
+            const submitBtn = form.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Actualizar';
+          }
+        });
+      }
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const asignacionId = row.dataset.id;
+          
+          if (!confirm('¿Eliminar esta asignación?')) return;
+          
+          fetch(`/asignacion_cursos/${asignacionId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') }
+          })
+          .then(response => {
+            if (response.ok) {
+              row.remove();
+              showNotification('Asignación eliminada correctamente', 'success');
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              showNotification('Error al eliminar la asignación', 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al eliminar la asignación', 'error');
+          });
+        });
+      }
+    }
+
+    // Attach handlers to existing rows
+    document.querySelectorAll('#asignaciones-table tbody tr').forEach(attachAsignacionHandlers);
+
+    // Interceptar submit del formulario
+    const asignacionForm = document.getElementById('asignacion-form');
+    if (asignacionForm) {
+      asignacionForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(asignacionForm);
+        const asignacionId = formData.get('asignacion[id]');
+        const url = asignacionId ? `/asignacion_cursos/${asignacionId}` : asignacionForm.action;
+        const method = asignacionId ? 'PATCH' : 'POST';
+
+        fetch(url, {
+          method: method,
+          headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (asignacionId) {
+              // Actualizar fila existente
+              const row = document.querySelector(`#asignaciones-table tbody tr[data-id="${asignacionId}"]`);
+              if (row) {
+                row.dataset.estudiante_id = data.asignacion.estudiante_id;
+                row.dataset.curso_id = data.asignacion.curso_id;
+                row.dataset.nota = data.asignacion.nota;
+                row.querySelector('td:nth-child(1)').textContent = data.asignacion.estudiante_nombre;
+                row.querySelector('td:nth-child(2)').textContent = data.asignacion.curso_nombre;
+                row.querySelector('td:nth-child(3)').textContent = data.asignacion.nota;
+              }
+            } else {
+              // Agregar nueva fila
+              const tbody = document.querySelector('#asignaciones-table tbody');
+              const tr = document.createElement('tr');
+              tr.dataset.id = data.asignacion.id;
+              tr.dataset.estudiante_id = data.asignacion.estudiante_id;
+              tr.dataset.curso_id = data.asignacion.curso_id;
+              tr.dataset.nota = data.asignacion.nota;
+              tr.innerHTML = `<td>${data.asignacion.estudiante_nombre}</td>
+                              <td>${data.asignacion.curso_nombre}</td>
+                              <td>${data.asignacion.nota}</td>
+                              <td><button class="btn-edit-asignacion" type="button">Modificar</button> <button class="btn-delete-asignacion" type="button">Eliminar</button></td>`;
+              tbody.appendChild(tr);
+              
+              // Reattach event handlers for new buttons
+              attachAsignacionHandlers(tr);
+            }
+
+            // Reset form
+            asignacionForm.reset();
+            const idField = asignacionForm.querySelector('input[name="asignacion[id]"]');
+            if (idField) idField.remove();
+            const submitBtn = asignacionForm.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Guardar';
+            
+            clearFieldErrors(asignacionForm);
+            showNotification(asignacionId ? 'Asignación actualizada correctamente' : 'Asignación creada correctamente', 'success');
+            setTimeout(() => location.reload(), 1500);
+          } else if (data.field_errors) {
+            displayFieldErrors(asignacionForm, data.field_errors);
+            showNotification('Por favor corrige los errores en el formulario', 'error');
+          } else if (data.errors) {
+            showNotification('Error: ' + data.errors.join(', '), 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification('Error al guardar la asignación', 'error');
+        });
+      });
+    }
+
+    // ===== FUNCIONALIDAD PARA CURSOS =====
+    
+    // Función para attach handlers de cursos
+    function attachCursoHandlers(row) {
+      const editBtn = row.querySelector('.btn-edit-curso');
+      const deleteBtn = row.querySelector('.btn-delete-curso');
+
+      if (editBtn) {
+        editBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const cursoId = row.dataset.id;
+          const nombre = row.dataset.nombre;
+          const profesorId = row.dataset.profesor_id;
+
+          // Rellenar formulario de cursos
+          const form = document.getElementById('curso-form');
+          if (form) {
+            const nombreInput = form.querySelector('input[name="curso[nombre]"]');
+            const profesorSelect = form.querySelector('select[name="curso[profesor_id]"]');
+
+            if (nombreInput) nombreInput.value = nombre;
+            if (profesorSelect) profesorSelect.value = profesorId;
+
+            // Agregar campo hidden para ID
+            let idField = form.querySelector('input[name="curso[id]"]');
+            if (!idField) {
+              idField = document.createElement('input');
+              idField.type = 'hidden';
+              idField.name = 'curso[id]';
+              form.appendChild(idField);
+            }
+            idField.value = cursoId;
+
+            // Cambiar texto del botón
+            const submitBtn = form.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Actualizar';
+          }
+        });
+      }
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const cursoId = row.dataset.id;
+          
+          if (!confirm('¿Eliminar este curso?')) return;
+          
+          fetch(`/cursos/${cursoId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+            credentials: 'same-origin'
+          })
+          .then(response => {
+            if (response.ok) {
+              row.remove();
+              showNotification('Curso eliminado correctamente', 'success');
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              showNotification('Error al eliminar el curso', 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al eliminar el curso', 'error');
+          });
+        });
+      }
+    }
+
+    // Función para attach handlers de profesores
+    function attachProfesorHandlers(row) {
+      const editBtn = row.querySelector('.btn-edit-profesor');
+      const deleteBtn = row.querySelector('.btn-delete-profesor');
+
+      if (editBtn) {
+        editBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const profesorId = row.dataset.id;
+          const nombre = row.dataset.nombre;
+          const telefono = row.dataset.telefono;
+
+          // Rellenar formulario de profesores
+          const form = document.getElementById('profesor-form');
+          if (form) {
+            const nombreInput = form.querySelector('input[name="profesor[nombre]"]');
+            const telefonoInput = form.querySelector('input[name="profesor[telefono]"]');
+
+            if (nombreInput) nombreInput.value = nombre;
+            if (telefonoInput) telefonoInput.value = telefono;
+
+            // Agregar campo hidden para ID
+            let idField = form.querySelector('input[name="profesor[id]"]');
+            if (!idField) {
+              idField = document.createElement('input');
+              idField.type = 'hidden';
+              idField.name = 'profesor[id]';
+              form.appendChild(idField);
+            }
+            idField.value = profesorId;
+
+            // Cambiar texto del botón
+            const submitBtn = form.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Actualizar';
+          }
+        });
+      }
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const profesorId = row.dataset.id;
+          
+          if (!confirm('¿Eliminar este profesor?')) return;
+          
+          fetch(`/profesores/${profesorId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+            credentials: 'same-origin'
+          })
+          .then(response => {
+            if (response.ok) {
+              row.remove();
+              showNotification('Profesor eliminado correctamente', 'success');
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              showNotification('Error al eliminar el profesor', 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al eliminar el profesor', 'error');
+          });
+        });
+      }
+    }
+
+    // Attach handlers to existing curso rows
+    document.querySelectorAll('#cursos-table tbody tr').forEach(attachCursoHandlers);
+    
+    // Attach handlers to existing profesor rows
+    document.querySelectorAll('#profesores-table tbody tr').forEach(attachProfesorHandlers);
+
+    // Interceptar submit del formulario de cursos
+    const cursoForm = document.getElementById('curso-form');
+    if (cursoForm) {
+      cursoForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(cursoForm);
+        const cursoId = formData.get('curso[id]');
+        const url = cursoId ? `/cursos/${cursoId}` : cursoForm.action;
+        const method = cursoId ? 'PATCH' : 'POST';
+
+        fetch(url, {
+          method: method,
+          headers: { 
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            curso: {
+              nombre: formData.get('curso[nombre]'),
+              profesor_id: formData.get('curso[profesor_id]'),
+              id: formData.get('curso[id]')
+            }
+          }),
+          credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (cursoId) {
+              // Actualizar fila existente
+              const row = document.querySelector(`#cursos-table tbody tr[data-id="${cursoId}"]`);
+              if (row) {
+                row.dataset.nombre = data.curso.nombre;
+                row.dataset.profesor_id = data.curso.profesor_id;
+                row.querySelector('td:nth-child(1)').textContent = data.curso.nombre;
+                row.querySelector('td:nth-child(2)').textContent = data.curso.profesor_nombre;
+              }
+            } else {
+              // Agregar nueva fila
+              const tbody = document.querySelector('#cursos-table tbody');
+              const tr = document.createElement('tr');
+              tr.dataset.id = data.curso.id;
+              tr.dataset.nombre = data.curso.nombre;
+              tr.dataset.profesor_id = data.curso.profesor_id;
+              tr.innerHTML = `<td>${data.curso.nombre}</td>
+                              <td>${data.curso.profesor_nombre}</td>
+                              <td><button class="btn-edit-curso" type="button">Modificar</button> <button class="btn-delete-curso" type="button">Eliminar</button></td>`;
+              tbody.appendChild(tr);
+              
+              // Reattach event handlers for new buttons
+              attachCursoHandlers(tr);
+            }
+
+            // Reset form
+            cursoForm.reset();
+            const idField = cursoForm.querySelector('input[name="curso[id]"]');
+            if (idField) idField.remove();
+            const submitBtn = cursoForm.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Guardar';
+            
+            clearFieldErrors(cursoForm);
+            showNotification(cursoId ? 'Curso actualizado correctamente' : 'Curso creado correctamente', 'success');
+            setTimeout(() => location.reload(), 1500);
+          } else if (data.field_errors) {
+            displayFieldErrors(cursoForm, data.field_errors);
+            showNotification('Por favor corrige los errores en el formulario', 'error');
+          } else if (data.errors) {
+            showNotification('Error: ' + data.errors.join(', '), 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification('Error al guardar el curso', 'error');
+        });
+      });
+    }
+
+    // Interceptar submit del formulario de profesores
+    const profesorForm = document.getElementById('profesor-form');
+    if (profesorForm) {
+      profesorForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(profesorForm);
+        const profesorId = formData.get('profesor[id]');
+        const url = profesorId ? `/profesores/${profesorId}` : profesorForm.action;
+        const method = profesorId ? 'PATCH' : 'POST';
+
+        fetch(url, {
+          method: method,
+          headers: { 
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            profesor: {
+              nombre: formData.get('profesor[nombre]'),
+              telefono: formData.get('profesor[telefono]'),
+              id: formData.get('profesor[id]')
+            }
+          }),
+          credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (profesorId) {
+              // Actualizar fila existente
+              const row = document.querySelector(`#profesores-table tbody tr[data-id="${profesorId}"]`);
+              if (row) {
+                row.dataset.nombre = data.profesor.nombre;
+                row.dataset.telefono = data.profesor.telefono;
+                row.querySelector('td:nth-child(1)').textContent = data.profesor.nombre;
+                row.querySelector('td:nth-child(2)').textContent = data.profesor.telefono;
+              }
+            } else {
+              // Agregar nueva fila
+              const tbody = document.querySelector('#profesores-table tbody');
+              const tr = document.createElement('tr');
+              tr.dataset.id = data.profesor.id;
+              tr.dataset.nombre = data.profesor.nombre;
+              tr.dataset.telefono = data.profesor.telefono;
+              tr.innerHTML = `<td>${data.profesor.nombre}</td>
+                              <td>${data.profesor.telefono}</td>
+                              <td><button class="btn-edit-profesor" type="button">Modificar</button> <button class="btn-delete-profesor" type="button">Eliminar</button></td>`;
+              tbody.appendChild(tr);
+              
+              // Reattach event handlers for new buttons
+              attachProfesorHandlers(tr);
+            }
+
+            // Reset form
+            profesorForm.reset();
+            const idField = profesorForm.querySelector('input[name="profesor[id]"]');
+            if (idField) idField.remove();
+            const submitBtn = profesorForm.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Guardar';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al guardar el profesor');
+        });
+      });
+    }
+
+    // ===== FUNCIONALIDAD PARA USUARIOS =====
+    
+    // Función para attach handlers de usuarios
+    function attachUsuarioHandlers(row) {
+      const editBtn = row.querySelector('.btn-edit-usuario');
+      const deleteBtn = row.querySelector('.btn-delete-usuario');
+
+      if (editBtn) {
+        editBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const usuarioId = row.dataset.id;
+          const nombre = row.dataset.nombre;
+          const rolId = row.dataset.rol_id;
+
+          // Rellenar formulario de usuarios
+          const form = document.getElementById('usuario-form');
+          if (form) {
+            const nombreInput = form.querySelector('input[name="usuario[nombre]"]');
+            const rolSelect = form.querySelector('select[name="usuario[rol_id]"]');
+
+            if (nombreInput) nombreInput.value = nombre;
+            if (rolSelect) rolSelect.value = rolId;
+
+            // Agregar campo hidden para ID
+            let idField = form.querySelector('input[name="usuario[id]"]');
+            if (!idField) {
+              idField = document.createElement('input');
+              idField.type = 'hidden';
+              idField.name = 'usuario[id]';
+              form.appendChild(idField);
+            }
+            idField.value = usuarioId;
+
+            // Cambiar texto del botón
+            const submitBtn = form.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Actualizar';
+          }
+        });
+      }
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const usuarioId = row.dataset.id;
+          
+          if (!confirm('¿Eliminar este usuario?')) return;
+          
+          fetch(`/usuarios/${usuarioId}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+            credentials: 'same-origin'
+          })
+          .then(response => {
+            if (response.ok) {
+              row.remove();
+              showNotification('Usuario eliminado correctamente', 'success');
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              showNotification('Error al eliminar el usuario', 'error');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error al eliminar el usuario', 'error');
+          });
+        });
+      }
+    }
+
+    // Attach handlers to existing usuario rows
+    document.querySelectorAll('#usuarios-table tbody tr').forEach(attachUsuarioHandlers);
+
+    // Interceptar submit del formulario de usuarios
+    const usuarioForm = document.getElementById('usuario-form');
+    if (usuarioForm) {
+      usuarioForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(usuarioForm);
+        const usuarioId = formData.get('usuario[id]');
+        const url = usuarioId ? `/usuarios/${usuarioId}` : usuarioForm.action;
+        const method = usuarioId ? 'PATCH' : 'POST';
+
+        fetch(url, {
+          method: method,
+          headers: { 
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            usuario: {
+              nombre: formData.get('usuario[nombre]'),
+              password: formData.get('usuario[password]'),
+              rol_id: formData.get('usuario[rol_id]'),
+              id: formData.get('usuario[id]')
+            }
+          }),
+          credentials: 'same-origin'
+        })
+        .then(async (response) => {
+          let data;
+          try {
+            data = await response.clone().json();
+          } catch (e) {
+            // No JSON (posible redirección o HTML); generar error genérico
+            if (!response.ok) throw new Error('Error ' + response.status + ': No se pudo crear/actualizar el usuario');
+            return {}; // continuar por si acaso
+          }
+          if (!response.ok) {
+            const msg = (data && data.errors) ? data.errors.join(', ') : 'No se pudo guardar el usuario';
+            throw new Error(msg);
+          }
+          return data;
+        })
+        .then(data => {
+          if (data && data.success) {
+            if (usuarioId) {
+              // Actualizar fila existente
+              const row = document.querySelector(`#usuarios-table tbody tr[data-id="${usuarioId}"]`);
+              if (row) {
+                row.dataset.nombre = data.usuario.nombre;
+                row.dataset.rol_id = data.usuario.rol_id;
+                row.querySelector('td:nth-child(1)').textContent = data.usuario.nombre;
+                row.querySelector('td:nth-child(2)').textContent = '••••••';
+                row.querySelector('td:nth-child(3)').textContent = data.usuario.rol_nombre;
+              }
+            } else {
+              // Agregar nueva fila
+              const tbody = document.querySelector('#usuarios-table tbody');
+              const tr = document.createElement('tr');
+              tr.dataset.id = data.usuario.id;
+              tr.dataset.nombre = data.usuario.nombre;
+              tr.dataset.rol_id = data.usuario.rol_id;
+              tr.innerHTML = `<td>${data.usuario.nombre}</td>
+                              <td>••••••</td>
+                              <td>${data.usuario.rol_nombre}</td>
+                              <td><button class="btn-edit-usuario" type="button">Modificar</button> <button class="btn-delete-usuario" type="button">Eliminar</button></td>`;
+              tbody.appendChild(tr);
+              
+              // Reattach event handlers for new buttons
+              attachUsuarioHandlers(tr);
+            }
+
+            // Reset form
+            usuarioForm.reset();
+            const idField = usuarioForm.querySelector('input[name="usuario[id]"]');
+            if (idField) idField.remove();
+            const submitBtn = usuarioForm.querySelector('input[type="submit"]');
+            if (submitBtn) submitBtn.value = 'Guardar';
+          } else if (data && data.errors) {
+            alert(data.errors.join(', '));
+          }
+        })
+        .catch(error => {
+          alert(error.message || 'Error al guardar el usuario');
+        });
+      });
+    }
+  });
+
+  // Toggle password visibility
+  const togglePasswordBtn = document.getElementById('toggle_password_visibility');
+  const passwordField = document.getElementById('usuario_password_field');
+  const eyeIcon = document.getElementById('eye_icon');
+  const eyeSlashIcon = document.getElementById('eye_slash_icon');
+
+  if (togglePasswordBtn && passwordField) {
+    togglePasswordBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.classList.add('hidden');
+        eyeSlashIcon.classList.remove('hidden');
+      } else {
+        passwordField.type = 'password';
+        eyeIcon.classList.remove('hidden');
+        eyeSlashIcon.classList.add('hidden');
+      }
+    });
+  }
+</script>

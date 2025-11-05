@@ -39,7 +39,7 @@ FinGestor es una aplicación web desarrollada con Ruby on Rails para la gestión
 - Sistema de búsqueda y filtrado de información
 - Validaciones exhaustivas de integridad de datos
 
-![Conceptos](./conceptos.png)
+![Conceptos](/conceptos.png)
 
 ### Público Objetivo
 

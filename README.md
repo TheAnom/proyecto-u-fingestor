@@ -1,4 +1,4 @@
-
+![Fingestor](/fingestor.png)
 # FinGestor - Sistema de Gestión Académica y Financiera
 
 [Proyecto Propuesta](./01_intro)

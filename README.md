@@ -1,3 +1,5 @@
+![Fingestor](./fingestor.png)
+
 # FinGestor - Sistema de Gestión Académica y Financiera
 
 [Proyecto Propuesta](./01_intro)
@@ -36,6 +38,8 @@ FinGestor es una aplicación web desarrollada con Ruby on Rails para la gestión
 - Paginación automática en todas las tablas de datos
 - Sistema de búsqueda y filtrado de información
 - Validaciones exhaustivas de integridad de datos
+
+![Conceptos](./conceptos.png)
 
 ### Público Objetivo
 

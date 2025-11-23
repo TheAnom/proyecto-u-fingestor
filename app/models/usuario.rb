@@ -29,8 +29,8 @@ class Usuario < ApplicationRecord
   
   def rol_debe_ser_valido
     return unless rol
-    unless ['administrador', 'suplente'].include?(rol.nombre.downcase)
-      errors.add(:rol, "debe ser Administrador o Suplente")
+    unless ['administrador', 'suplente', 'consultor'].include?(rol.nombre.downcase)
+      errors.add(:rol, "debe ser Administrador, Suplente o Consultor")
     end
   end
 end

@@ -21,7 +21,7 @@ Sistema web desarrollado en Ruby on Rails para la administración integral de in
 9. [Guía de Usuario](#guía-de-usuario)
 10. [Mantenimiento y Despliegue](#mantenimiento-y-despliegue)
 
-### Acceda con Usuarios: Jef PassWord: 123
+### Acceda con Usuarios: jef PassWord: 123
 
 ## Descripción General
 

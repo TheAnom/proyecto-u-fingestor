@@ -21,6 +21,8 @@ Sistema web desarrollado en Ruby on Rails para la administración integral de in
 9. [Guía de Usuario](#guía-de-usuario)
 10. [Mantenimiento y Despliegue](#mantenimiento-y-despliegue)
 
+### Acceda con Usuarios: Jef PassWord: 123
+
 ## Descripción General
 
 FinGestor es una aplicación web desarrollada con Ruby on Rails para la gestión integral de instituciones educativas. El sistema centraliza la administración de estudiantes, pagos, cursos y reportes académicos, facilitando el control financiero y académico de manera eficiente y segura.
